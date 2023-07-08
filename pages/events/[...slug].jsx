@@ -5,6 +5,7 @@ import ResultsTitle from "../../components/events/ResultTitle";
 import Button from "../../components/ui/Button";
 import ErrorAlert from "../../components/ui/ErrorAlert";
 import useSWR from "swr";
+import Head from "next/head";
 
 const FilteredEventsPage = () => {
   const [loadedEvents, setLoadedEvents] = useState();
@@ -31,12 +32,26 @@ const FilteredEventsPage = () => {
     }
   }, [data]);
 
+  let pageHeadData = (
+    <Head>
+      <title>Filtered Events</title>
+      <meta name="description" content={"A list of filtered events."} />
+    </Head>
+  );
+
   if (!loadedEvents) {
-    return <p className="center">Loading...</p>;
+    return (
+      <Fragment>
+        {pageHeadData}
+        <p className="center">Loading...</p>
+      </Fragment>
+    );
   }
 
   const year = +router.query.slug[0];
   const month = +router.query.slug[1];
+
+  pageHeadData = <Head></Head>;
 
   if (
     isNaN(year) ||
@@ -49,6 +64,7 @@ const FilteredEventsPage = () => {
   ) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>Invalid filter. Please adjust your values!</p>
         </ErrorAlert>
@@ -69,6 +85,7 @@ const FilteredEventsPage = () => {
   if (!filteredEvents || filteredEvents.length === 0) {
     return (
       <Fragment>
+        {pageHeadData}
         <ErrorAlert>
           <p>No Events found for the chosen filter!</p>
         </ErrorAlert>
