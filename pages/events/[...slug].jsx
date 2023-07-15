@@ -1,3 +1,4 @@
+import auth_data from "../../data/token.json";
 import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import EventList from "../../components/events/EventList";
@@ -7,13 +8,13 @@ import ErrorAlert from "../../components/ui/ErrorAlert";
 import useSWR from "swr";
 import Head from "next/head";
 
-const FilteredEventsPage = () => {
+const FilteredEventsPage = (props) => {
   const [loadedEvents, setLoadedEvents] = useState();
   const router = useRouter();
 
   // TODO: Add token here
   const { data, error } = useSWR(
-    "https://react-http-58d88-default-rtdb.firebaseio.com/events.json?access_token=",
+    `https://react-http-58d88-default-rtdb.firebaseio.com/events.json?access_token=${props.token}`,
     (url) => fetch(url).then((res) => res.json())
   );
 
@@ -104,6 +105,14 @@ const FilteredEventsPage = () => {
       <EventList items={filteredEvents} />
     </Fragment>
   );
+};
+
+export const getServerSideProps = async () => {
+  return {
+    props: {
+      token: auth_data.token,
+    },
+  };
 };
 
 // export const getServerSideProps = async (context) => {
